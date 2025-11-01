@@ -32,7 +32,11 @@ def fetch_yesterday_data(symbol):
     df["Open"] = df["Open"].astype(float).round(6)
     df["Volume"] = df["Volume"].astype(float).astype(int)
 
-    df["Date"] = pd.to_datetime(df["Date"]).dt.strftime("%m/%d/%Y")
+    # df["Date"] = pd.to_datetime(df["Date"]).dt.strftime("%m/%d/%Y")
+    # need this formate 2025-10-30 no timestamp
+    
+    df["Date"] = pd.to_datetime(df["Date"]).dt.strftime("%Y-%m-%d")
+    # df["Date"] = df["Date"].dt.strftime("%y-%m-%d")
     
 
     return df.tail(1)
@@ -88,10 +92,10 @@ def update_agent_accounts(symbol, df):
 
 
 def main():
-    symbols = ["RELIANCE", "TCS", "INFY", "HDFCBANK", "ICICIBANK","SBIN", "BHARTIARTL", "HINDUNILVR", "LT", "ITC"]
+    symbols = [ "RELIANCE","TCS", "INFY", "HDFCBANK", "ICICIBANK","SBIN", "BHARTIARTL", "HINDUNILVR", "LT", "ITC"]
     for symbol in symbols:
         df = update_csv(symbol)
-        
+        return
         if df is not None:
             update_agent_accounts(symbol, df)
         break

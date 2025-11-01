@@ -3,26 +3,13 @@ from indicators import add_indicators
 from strategy import generate_signals
 from backtest import backtest
 import os
+import json
+from agent.gemini_agent import decide_action
 
-# DATA_DIR = "data"
 
-# def run_backtest_for_stock(symbol):
-#     path = os.path.join(DATA_DIR, f"{symbol}.csv")
-#     df = pd.read_csv(path, parse_dates=["Date"], index_col="Date")
-#     df = add_indicators(df)
-#     df = generate_signals(df)
-#     print(f"🔍 Running backtest for {}...")
-#     result = backtest(df)
-#     print(f"📊 {symbol}: Final portfolio value = ₹{result}")
-
-# if __name__ == "__main__":
-#     stocks = ["RELIANCE", "TCS", "INFY", "HDFCBANK", "ICICIBANK",
-#               "SBIN", "BHARTIARTL", "HINDUNILVR", "LT", "ITC"]
-    
-#     for s in stocks:
-#         run_backtest_for_stock(s)
 
 data_dir = "data"
+ACCOUNT_FILE = "account.json" 
 stock_data = {}
 
 
@@ -40,3 +27,24 @@ for filename in os.listdir(data_dir):
         print(f"📈 Loaded and prepared {symbol}")
 
 print(stock_data)
+
+def main():
+    with open(ACCOUNT_FILE, "r") as f:
+        accounts = json.load(f)
+
+    for account in accounts:
+        print(f"\n🤖 Agent: {account['name']}")
+        portfolio = account.get("portfolio", [])
+        cash = account.get("credits", 0)
+
+        # Ask Gemini for next actions
+        actions = decide_action(account["name"], portfolio, stock_data, cash)
+        print(actions,"dfdsfsdf")
+
+    
+
+
+if __name__ == "__main__":
+    main()
+
+
