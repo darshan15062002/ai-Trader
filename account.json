@@ -1,0 +1,17 @@
+[
+    {
+        "name": "gemini-flash-2.0",
+        "credits": 897728.0004799999,
+        "portfolio": [
+            {
+                "symbol": "RELIANCE",
+                "quantity": 10,
+                "buy_price": 1200,
+                "price": 1486.400024,
+                "last_updated": "2025-11-01 23:38:29",
+                "total_profit_loss": 2864.0002400000003
+            }
+        ],
+        "total_credits": 1000000
+    }
+]
