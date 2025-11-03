@@ -4,6 +4,7 @@ import os
 import json
 from datetime import datetime, timedelta
 from indicators import add_indicators
+from snapshot import save_agent_snapshot 
 
 DATA_DIR = "data"
 ACCOUNT_FILE = "account.json"  # to store each agent’s cash & holdings
@@ -102,6 +103,10 @@ def update_agent_accounts(symbol, df):
         account["total_credits"] = total_credits    
     with open(ACCOUNT_FILE, "w") as f:
         json.dump(accounts, f, indent=4)
+
+    for account in accounts:
+        print(f"💰 Agent {account['name']} | Total Credits: ₹{account['total_credits']:.2f}")
+        save_agent_snapshot(account,datetime.now().date())
         
 
 
