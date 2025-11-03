@@ -1,0 +1,161 @@
+<!-- templates/dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Trader Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1,
+        h2 {
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+
+        .positive {
+            color: #28a745;
+        }
+
+        .negative {
+            color: #dc3545;
+        }
+
+        #equityChart {
+            height: 300px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 AI Trader Performance Dashboard</h1>
+
+        <div class="card">
+            <h2>📈 Equity Curve</h2>
+            <div style="height: 400px; position: relative;">
+                <canvas id="equityChart"></canvas>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>💼 Latest Portfolio ({{ latest_date }})</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Symbol</th>
+                        <th>Quantity</th>
+                        <th>Buy Price (₹)</th>
+                        <th>Book Value (₹)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for asset in latest_portfolio %}
+                    <tr>
+                        <td>{{ asset.symbol }}</td>
+                        <td>{{ asset.quantity }}</td>
+                        <td>{{ "%.2f"|format(asset.buy_price) }}</td>
+                        <td>{{ "%.2f"|format(asset.quantity * asset.buy_price) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <p><strong>Cash (Credits):</strong> ₹{{ "%.2f"|format(latest_credits) }}</p>
+            <p><strong>Total Equity:</strong> ₹{{ "%.2f"|format(latest_equity) }}</p>
+        </div>
+
+        <div class="card">
+            <h2>📊 Daily PnL History</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>PnL (₹)</th>
+                        <th>Equity (₹)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for day in snapshots | reverse %}
+                    <tr>
+                        <td>{{ day.date }}</td>
+                        <td class="{% if day.pnl >= 0 %}positive{% else %}negative{% endif %}">
+                            {{ "%.2f"|format(day.pnl) }}
+                        </td>
+                        <td>{{ "%.2f"|format(day.equity) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+
+        const ctx = document.getElementById('equityChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: {{ dates | tojson }},
+            datasets: [{
+                label: 'Total Equity (₹)',
+                data: {{ equities | tojson }},
+            borderColor: '#4e73df',
+            backgroundColor: 'rgba(78, 115, 223, 0.1)',
+            borderWidth: 2,
+            tension: 0.3,
+            fill: true,
+            pointRadius: 3
+            }]
+        },
+            options: {
+            responsive: true,      // ✅ respect container size
+            maintainAspectRatio: false, // ✅ allow non-square aspect
+            plugins: {
+                legend: { position: 'top' }
+            },
+            scales: {
+                y: { beginAtZero: false },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+    </script>
+</body>
+</html>

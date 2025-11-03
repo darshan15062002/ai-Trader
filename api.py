@@ -1,9 +1,11 @@
 # api.py
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse
 from motor.motor_asyncio import AsyncIOMotorClient
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.templating import Jinja2Templates
 from datetime import datetime
-
+templates = Jinja2Templates(directory="templates")
 app = FastAPI()
 
 app.add_middleware(
@@ -35,3 +37,55 @@ async def get_agent_snapshots(agent_name: str = "gemini-flash-2.0"):
             snap["date"] = snap["date"].isoformat()
 
     return snapshots
+
+@app.get("/", response_class=HTMLResponse)
+async def dashboard(request: Request):
+    # Fetch all snapshots for the agent
+    snapshots = await snapshots_collection.find(
+        {"agent_name": "gemini-flash-2.0"},
+        {"_id": 0}
+    ).sort("date", 1).to_list(length=1000)
+
+    if not snapshots:
+        return HTMLResponse("<h1>No data found</h1>")
+
+    # Compute equity and PnL
+    processed = []
+    starting_balance = snapshots[0].get("total_credits", 1000000)
+    prev_equity = starting_balance
+
+    for snap in snapshots:
+        portfolio_value = sum(
+            asset["quantity"] * asset["buy_price"]
+            for asset in snap["portfolio"]
+        )
+        equity = snap["credits"] + portfolio_value
+        pnl = equity - prev_equity
+        prev_equity = equity
+
+        processed.append({
+            "date": snap["date"],
+            "equity": equity,
+            "pnl": pnl,
+            "credits": snap["credits"],
+            "portfolio": snap["portfolio"]
+        })
+
+    # Prepare data for template
+    dates = [s["date"] for s in processed]
+    equities = [s["equity"] for s in processed]
+    latest = processed[-1]
+
+    return templates.TemplateResponse(
+        "dashboard.html",
+        {
+            "request": request,
+            "dates": dates,
+            "equities": equities,
+            "snapshots": processed,
+            "latest_date": latest["date"],
+            "latest_portfolio": latest["portfolio"],
+            "latest_credits": latest["credits"],
+            "latest_equity": latest["equity"]
+        }
+    )
