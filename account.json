@@ -1,9 +1,28 @@
 [
     {
         "name": "gemini-flash-2.0",
-        "credits":1000000,
+        "credits": 929067.9992675781,
         "portfolio": [
-          
+            {
+                "symbol": "BHARTIARTL",
+                "quantity": 10,
+                "buy_price": 2054.5
+            },
+            {
+                "symbol": "INFY",
+                "quantity": 10,
+                "buy_price": 1482.300048828125
+            },
+            {
+                "symbol": "ITC",
+                "quantity": 50,
+                "buy_price": 414.0
+            },
+            {
+                "symbol": "RELIANCE",
+                "quantity": 10,
+                "buy_price": 1486.4000244140625
+            }
         ],
         "total_credits": 1000000
     }
