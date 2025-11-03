@@ -5,6 +5,8 @@ from backtest import backtest
 import os
 import json
 from agent.gemini_agent import decide_action
+from daily_update import update_market_data
+import sys
 import datetime
 
 
@@ -129,6 +131,12 @@ def main():
         print(f"   Cash After: ₹{trade['cash_after']}")
 
 if __name__ == "__main__":
-    main()
+    try:
+        update_market_data()
+        main()
+        print("✅ Daily trading completed successfully!")
+    except Exception as e:
+        print(f"❌ Error: {e}")
+        sys.exit(1)  # Critical: tells Render job failed
 
 

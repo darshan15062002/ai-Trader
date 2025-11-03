@@ -1,49 +1,10 @@
 [
     {
         "name": "gemini-flash-2.0",
-        "credits": 80349.99390851561,
+        "credits":1000000,
         "portfolio": [
-            {
-                "symbol": "BHARTIARTL",
-                "quantity": 95,
-                "buy_price": 2054.5,
-                "total_profit_loss": 0.0,
-                "price": 2054.5,
-                "last_updated": "2025-11-03 13:25:32"
-            },
-            {
-                "symbol": "INFY",
-                "quantity": 130,
-                "buy_price": 1482.300048828125,
-                "total_profit_loss": 0.0,
-                "price": 1482.300048828125,
-                "last_updated": "2025-11-03 13:25:30"
-            },
-            {
-                "symbol": "ITC",
-                "quantity": 480,
-                "buy_price": 414.0,
-                "total_profit_loss": 0.0,
-                "price": 414.0,
-                "last_updated": "2025-11-03 13:25:33"
-            },
-            {
-                "symbol": "LT",
-                "quantity": 35,
-                "buy_price": 3994.899902,
-                "total_profit_loss": 0.0,
-                "price": 3994.899902,
-                "last_updated": "2025-11-03 13:25:33"
-            },
-            {
-                "symbol": "RELIANCE",
-                "quantity": 130,
-                "buy_price": 1486.4000244140625,
-                "total_profit_loss": 0.0,
-                "price": 1486.4000244140625,
-                "last_updated": "2025-11-03 13:25:29"
-            }
+          
         ],
-        "total_credits": 1000000.0
+        "total_credits": 1000000
     }
 ]
