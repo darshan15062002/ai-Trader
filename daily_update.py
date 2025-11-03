@@ -105,7 +105,7 @@ def update_agent_accounts(symbol, df):
         
 
 
-def main():
+def update_market_data():
     symbols = [ "RELIANCE","TCS", "INFY", "HDFCBANK", "ICICIBANK","SBIN", "BHARTIARTL", "HINDUNILVR", "LT", "ITC"]
     for symbol in symbols:
         df = update_csv(symbol)
@@ -113,6 +113,3 @@ def main():
         if df is not None:
             update_agent_accounts(symbol, df)
         
-
-if __name__ == "__main__":
-    main()
