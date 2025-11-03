@@ -82,23 +82,37 @@ def update_agent_accounts(symbol, df):
                 stock["price"] = latest_close
                 stock["last_updated"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-                # Adjust credits (optional: if you want realized gains reflected)
-                account["credits"] = credits + today_profit_loss
+              
                 print(f"🤖 Agent {account['name']} | {symbol}: ₹{today_profit_loss:.2f} today | Total: ₹{stock['total_profit_loss']:.2f}")
+
 
     # Save updates
     with open(ACCOUNT_FILE, "w") as f:
         json.dump(accounts, f, indent=4)
 
 
+    for account in accounts:
+        portfolio = account.get("portfolio", [])
+        credits = account.get("credits", 0)
+        total_credits = account.get("total_credits", 0)
+        total_portfolio_value = sum(
+            stock.get("price", 0) * stock.get("quantity", 0) for stock in portfolio
+        )
+        total_credits = credits + total_portfolio_value
+        account["total_credits"] = total_credits    
+    with open(ACCOUNT_FILE, "w") as f:
+        json.dump(accounts, f, indent=4)
+        
+
+
 def main():
     symbols = [ "RELIANCE","TCS", "INFY", "HDFCBANK", "ICICIBANK","SBIN", "BHARTIARTL", "HINDUNILVR", "LT", "ITC"]
     for symbol in symbols:
         df = update_csv(symbol)
-        return
+        
         if df is not None:
             update_agent_accounts(symbol, df)
-        break
+        
 
 if __name__ == "__main__":
     main()

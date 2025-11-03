@@ -4,6 +4,22 @@ import os, json
 # Configure Gemini API
 genai.configure(api_key="AIzaSyAfjsA-tRRq6iBmlvX1abOmZgIDweq_Hwg")
 
+def clean_model_output(raw_text: str) -> str:
+    """
+    Clean Gemini output so it's pure JSON.
+    Handles code blocks like ```json ... ```, stray text, or spaces.
+    """
+    text = raw_text.strip()
+
+    # Remove Markdown code fences
+    if text.startswith("```"):
+        # remove leading and trailing triple backticks
+        text = text.strip("`")
+        # remove possible 'json' tag
+        text = text.replace("json", "", 1).strip()
+    # In case Gemini adds markdown fencing inside
+    text = text.replace("```json", "").replace("```", "").strip()
+    return text
 def decide_action(agent_name, portfolio, stock_data, cash_available):
     """
     Ask Gemini for a trading decision.
@@ -23,8 +39,10 @@ def decide_action(agent_name, portfolio, stock_data, cash_available):
     - SMA_20 vs SMA_50: trend direction
     - RSI_14: overbought/oversold
     - MACD, MACD_signal, MACD_diff: momentum
+    
 
-    Respond ONLY in JSON format like this:
+    #IMPORTANT : Return ONLY valid JSON — no explanation, no markdown, no commentary.
+
     {{
         "decisions": [
             {{"symbol": "RELIANCE", "action": "BUY", "quantity": 5}},
@@ -33,11 +51,11 @@ def decide_action(agent_name, portfolio, stock_data, cash_available):
     }}
     """
 
-    model = genai.GenerativeModel("gemini-2.0-flash")
+    model = genai.GenerativeModel("gemini-2.5-flash")
     response = model.generate_content(prompt)
 
     try:
-        text = response.text.strip()
+        text = clean_model_output(response.text)
         decision_data = json.loads(text)
         return decision_data
     except Exception as e:

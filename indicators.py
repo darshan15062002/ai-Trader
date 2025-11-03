@@ -24,6 +24,7 @@ def add_indicators(df: pd.DataFrame) -> pd.DataFrame:
     df["MACD"] = macd.macd()
     df["MACD_signal"] = macd.macd_signal()
     df["MACD_diff"] = macd.macd_diff()
+    df["price"] = df["Close"]
 
     # --- Drop rows with missing data from early periods ---
     df = df.dropna().copy()
