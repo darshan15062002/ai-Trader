@@ -40,7 +40,6 @@ async def get_agent_snapshots(agent_name: str = "gemini-flash-2.0"):
 
 @app.get("/", response_class=HTMLResponse)
 async def dashboard(request: Request):
-    # Fetch all snapshots for the agent
     snapshots = await snapshots_collection.find(
         {"agent_name": "gemini-flash-2.0"},
         {"_id": 0}
@@ -49,29 +48,24 @@ async def dashboard(request: Request):
     if not snapshots:
         return HTMLResponse("<h1>No data found</h1>")
 
-    # Compute equity and PnL
+    # ✅ Just use total_credits — it's already the correct equity!
     processed = []
-    starting_balance = snapshots[0].get("total_credits", 1000000)
-    prev_equity = starting_balance
+    prev_equity = snapshots[0]["total_credits"]  # Starting equity
 
     for snap in snapshots:
-        portfolio_value = sum(
-            asset["quantity"] * asset["buy_price"]
-            for asset in snap["portfolio"]
-        )
-        equity = snap["credits"] + portfolio_value
-        pnl = equity - prev_equity
-        prev_equity = equity
+        current_equity = snap["total_credits"]
+        pnl = current_equity - prev_equity
+        prev_equity = current_equity
 
         processed.append({
             "date": snap["date"],
-            "equity": equity,
+            "equity": current_equity,     # ✅ Direct from DB
             "pnl": pnl,
             "credits": snap["credits"],
             "portfolio": snap["portfolio"]
         })
 
-    # Prepare data for template
+    # Prepare data for chart
     dates = [s["date"] for s in processed]
     equities = [s["equity"] for s in processed]
     latest = processed[-1]
