@@ -79,7 +79,7 @@ def update_agent_accounts(symbol, df):
                 today_profit_loss = (latest_close - stock["buy_price"]) * stock["quantity"]
 
                 # Update fields
-                stock["total_profit_loss"] = stock.get("total_profit_loss", 0) + today_profit_loss
+                stock["total_profit_loss"] =  today_profit_loss
                 stock["price"] = latest_close
                 stock["last_updated"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
