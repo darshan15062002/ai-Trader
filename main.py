@@ -41,8 +41,10 @@ def main():
         portfolio = account.get("portfolio", [])
         cash = account.get("credits", 0)
 
+
         # Ask Gemini for next actions
         actions = decide_action(account["name"], portfolio, stock_data, cash)
+        print(actions)
         for decision in actions["decisions"]:
             symbol = decision["symbol"]
             action = decision["action"].upper()
